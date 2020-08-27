@@ -8,47 +8,60 @@
             web3.setProvider(new
             web3.providers.HttpProvider('http://localhost:8545'));
 
-            function getBlockInfo(blockNumber) {
-                
-                web3.eth.getBlock(blockNumber, (err, blockInfo) => {
-                    if (err) {
-                        document.getElementById('blockinfo').innerHTML = err;       
-                    }   
+
+            onload = function getMainAccounts() {
+                web3.eth.getAccounts((error, accs) => {
+                    if (error) {
+                        document.getElementById('address').innerHTML =  error;
+                    }
                     else {
-                        var str = '';
-                        for(var key in blockInfo) {
-                            str += '<tr><td>' + key + '</td><td>' + JSON.stringify(blockInfo[key]) + '</td></tr>'; 
-                        }
-                        document.getElementById('blockinfo').innerHTML = '<table>' + str + '</table>';
-                    }     
-                });
+                        accounts = accs;
+                        document.getElementById('address').innerHTML = web3.eth.accounts[0]
+                    }
+
+                web3.eth.getBalance(web3.eth.accounts[0], (error, balance) => {
+                    if(error) {
+                        document.getElementById('balance').innerHTML =  error;
+                    }
+                    else {
+                        document.getElementById('balance').innerHTML =  web3.fromWei(balance,"ether") + ' ether';
+                    }
+                })
+
+                })
             }
-
-
+            function sendTransaction() {
+                transto = document.getElementById("transto").value
+                amt = document.getElementById("amt").value
+                pass = document.getElementById("pass").value
+                web3.personal.sendTransaction({from: accounts[0], to: transto, value: web3.toWei(amt, "ether")}, pass, (error, transactionHash) => {
+                    if (error) {
+                        document.getElementById('transactionHash').innerHTML = error;
+                    }
+                    else {
+                        document.getElementById('transactionHash').innerHTML = 'Transaction Hash : ' + transactionHash;
+                    }
+                })
+            }
         </script>
     </head>
     <body>
         <h1>Node 1</h1>
-        <h1>Money Tranfer</h1>
+        <h1>Money Transfer</h1>
         <hr>
-        <h2>Main Account Tranfer</h2>
-        <label>Address : </label>
-        <br>
-        <label>balance : </label>
+        <p><b>Main Account Info</b></p>
+        <p><span>Address : </span><span id="address"></span></p>
+        <p><span>balance : </span><span id="balance"></span></p>
         <hr>
-        <label>Tranfer to: </label>
-        <input type="text" id="blocknumber"/>
-
+        <label>Transfer to: </label>
+        <input type="text" id="transto"/>
         <label>Amount (ether): </label>
-        <input type="text" id="blocknumber"/>
-
-        <label>Pass Phase: </label>
-        <input type="text" id="blocknumber"/>
-        
+        <input type="number" id="amt"/>
+        <label>Pass pharase: </label>
+        <input type="password" id="pass"/>
         <br>
-
-        <button type="button" onclick=" ">send</button>
-        <div id="blockinfo"></div>
-        
+        <button type="button" onclick="sendTransaction()">Send</button>
+        <hr>
+        <p><span id="transactionHash"></span></p>
     </body>
 </html>
