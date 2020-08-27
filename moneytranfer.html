@@ -1,0 +1,54 @@
+<html>
+    <head>
+        <script src="web3.js"></script>
+        <script>
+            var Web3 = require('web3');
+            var web3 = new Web3();
+            //connect to the node
+            web3.setProvider(new
+            web3.providers.HttpProvider('http://localhost:8545'));
+
+            function getBlockInfo(blockNumber) {
+                
+                web3.eth.getBlock(blockNumber, (err, blockInfo) => {
+                    if (err) {
+                        document.getElementById('blockinfo').innerHTML = err;       
+                    }   
+                    else {
+                        var str = '';
+                        for(var key in blockInfo) {
+                            str += '<tr><td>' + key + '</td><td>' + JSON.stringify(blockInfo[key]) + '</td></tr>'; 
+                        }
+                        document.getElementById('blockinfo').innerHTML = '<table>' + str + '</table>';
+                    }     
+                });
+            }
+
+
+        </script>
+    </head>
+    <body>
+        <h1>Node 1</h1>
+        <h1>Money Tranfer</h1>
+        <hr>
+        <h2>Main Account Tranfer</h2>
+        <label>Address : </label>
+        <br>
+        <label>balance : </label>
+        <hr>
+        <label>Tranfer to: </label>
+        <input type="text" id="blocknumber"/>
+
+        <label>Amount (ether): </label>
+        <input type="text" id="blocknumber"/>
+
+        <label>Pass Phase: </label>
+        <input type="text" id="blocknumber"/>
+        
+        <br>
+
+        <button type="button" onclick=" ">send</button>
+        <div id="blockinfo"></div>
+        
+    </body>
+</html>
